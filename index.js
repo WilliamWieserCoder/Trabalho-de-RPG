@@ -1,4 +1,5 @@
 
+// Definição do objeto jogador
 let jogador = {
     nome: "",
     classe: "",
@@ -10,12 +11,43 @@ let jogador = {
     inventario: [],
     xp: 0, // Experiência do jogador
     nivel: 1, // Nível do jogador
-    monstrosDerrotados: 0 // Contador de monstros derrotados
+    monstrosDerrotados: 0, // Contador de monstros derrotados
+    gold: 0 // Ouro do jogador
 };
 
 // Função para gerar um número aleatório entre min e max (inclusive)
 function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+// Função para ganhar ouro
+function ganharGold(amount) {
+    jogador.gold += amount;
+    console.log(`Você ganhou ${amount} de ouro! Total de ouro: ${jogador.gold}`);
+}
+
+// Função para comprar poção de cura
+function comprarPocaoCura() {
+    if (jogador.gold >= 10) {
+        jogador.gold -= 10;
+        jogador.hp += 10; // Recupera 10 pontos de vida
+        console.log("Você comprou uma poção de cura e recuperou 10 pontos de vida.");
+        console.log(`Ouro restante: ${jogador.gold}`);
+    } else {
+        console.log("Você não tem ouro suficiente para comprar uma poção de cura.");
+    }
+}
+
+// Função para comprar poção de dano
+function comprarPocaoDano() {
+    if (jogador.gold >= 20) {
+        jogador.gold -= 20;
+        console.log("Você comprou uma poção de dano. Seu próximo ataque causará o dobro de dano.");
+        console.log(`Ouro restante: ${jogador.gold}`);
+        // Ativar o efeito da poção de dano (não implementado neste exemplo)
+    } else {
+        console.log("Você não tem ouro suficiente para comprar uma poção de dano.");
+    }
 }
 
 // Array de monstros
@@ -28,7 +60,7 @@ const monstros = [
     { nome: "Troll", hp: 18, forca: 7, xp: 60 },
     { nome: "Morcego Gigante", hp: 10, forca: 3, xp: 15 },
     { nome: "Lobo", hp: 13, forca: 6, xp: 25 }
-];
+]
 
 // Função para escolher um monstro aleatório do array
 function escolherMonstroAleatorio() {
@@ -42,8 +74,8 @@ function ganharXP(xpGanho) {
     console.log(`Você ganhou ${xpGanho} de XP! XP acumulada: ${jogador.xp}`);
     while (jogador.xp >= jogador.nivel * 100) {
         jogador.nivel++;
-        jogador.hp += 8; // Aumenta os pontos de vida ao subir de nível
-        console.log(`Parabéns! Você subiu para o nível ${jogador.nivel} e ganhou 8 pontos de vida.`);
+        jogador.hp += 5; // Aumenta os pontos de vida ao subir de nível
+        console.log(`Parabéns! Você subiu para o nível ${jogador.nivel} e ganhou 5 pontos de vida.`);
     }
 }
 
@@ -59,7 +91,8 @@ function Mostrarinfo() {
     Magia: ${jogador.mag}
     Destreza: ${jogador.des}
     XP: ${jogador.xp}
-    Nível: ${jogador.nivel}`);
+    Nível: ${jogador.nivel}
+    Ouro: ${jogador.gold}`);
 }
 
 // Função para verificar se o jogador está vivo
@@ -98,11 +131,12 @@ function batalhar(monstro) {
         console.log(`Você derrotou o ${monstro.nome}!`);
         jogador.monstrosDerrotados++; // Incrementa o contador de monstros derrotados
         ganharXP(monstro.xp); // Ganha XP ao derrotar o monstro
+        ganharGold(10); // Ganha 10 de ouro após cada batalha
         recuperarVida(); // Recupera um pouco de vida após a batalha
 
         // Verificar se o jogador derrotou 7 monstros e iniciar a batalha contra o chefe final
         if (jogador.monstrosDerrotados === 7) {
-            const boss = { nome: "Malenia", hp: 50, forca: 20, xp: 200 };
+            const boss = { nome: "Malenia", hp: 65, forca: 20, xp: 200 };
             console.log(`Você enfrentará o chefe final, ${boss.nome}!`);
             batalhar(boss);
             return; // Encerrar a função após a batalha contra o chefe final
@@ -112,7 +146,7 @@ function batalhar(monstro) {
 
 // Função para recuperar um pouco de vida após a batalha
 function recuperarVida() {
-    const vidaRecuperada = getRandomInt(4, 8); 
+    const vidaRecuperada = getRandomInt(2, 5); 
     jogador.hp += vidaRecuperada;
     console.log(`Você recuperou ${vidaRecuperada} pontos de vida após a batalha.`);
 }
@@ -194,9 +228,11 @@ switch (escolhaClasse) {
 while (jogadorEstaVivo()) {
     console.log("Escolha uma ação:");
     console.log("[1] Batalhar");
-    console.log("[2] Usar item do inventário");
+    console.log("[2] Visualizar itens no inventário");
     console.log("[3] Ver atributos");
-    console.log("[4] Sair do jogo");
+    console.log("[4] Comprar poção de dano (20 de ouro)");
+    console.log("[5] Comprar poção de cura (10 de ouro)");
+    console.log("[6] Sair do jogo");
 
     const escolhaAcao = prompt("Digite o número da ação escolhida:");
 
@@ -212,6 +248,12 @@ while (jogadorEstaVivo()) {
             Mostrarinfo();
             break;
         case "4":
+            comprarPocaoDano();
+            break;
+        case "5":
+            comprarPocaoCura();
+            break;
+        case "6":
             console.log("Obrigado por jogar!");
             break;
         default:
