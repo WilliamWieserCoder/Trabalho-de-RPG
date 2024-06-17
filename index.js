@@ -1,5 +1,3 @@
-
-// Definição do objeto jogador
 let jogador = {
     nome: "",
     classe: "",
@@ -9,15 +7,39 @@ let jogador = {
     mag: 0,
     des: 0,
     inventario: [],
-    xp: 0, // Experiência do jogador
-    nivel: 1, // Nível do jogador
-    monstrosDerrotados: 0, // Contador de monstros derrotados
-    gold: 0 // Ouro do jogador
+    xp: 0,
+    nivel: 1,
+    monstrosDerrotados: 0,
+    gold: 0
 };
 
 // Função para gerar um número aleatório entre min e max (inclusive)
 function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+// Função para aguardar um certo tempo antes de continuar
+function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// Função para dar as boas-vindas ao jogador
+async function boasVindas() {
+    console.log("===== Bem-vindo(a) ao Universo Soulslike =====");
+
+    console.log("Você acaba de chegar à cidade de Limgrave, um lugar repleto de mistérios e perigos.");
+    await delay(3000); 
+
+    console.log("Aqui, lendas são forjadas em batalhas épicas e fortunas são ganhas ou perdidas num piscar de olhos.");
+    await delay(3000);
+
+    console.log("Prepare-se para uma jornada cheia de desafios, onde suas escolhas moldarão seu destino.");
+    await delay(3000);
+
+    console.log(`Que a força esteja com você, ${jogador.nome}!`);
+    await delay(3000);
+
+    console.log("===== Boa sorte e que a aventura comece! =====");
 }
 
 // Função para ganhar ouro
@@ -168,95 +190,98 @@ function mostrarItensClasse() {
     });
 }
 
-// Início do jogo
-console.log("=====Bem vindo(a)=====\nVamos criar seu personagem.");
+// Função principal que controla o jogo
+async function jogo() {
+    await boasVindas(); // Executa a sequência de boas-vindas
 
-jogador.nome = prompt("Primeiro, qual seu nome?");
+    console.log("===== Criando seu personagem =====");
+    jogador.nome = prompt("Primeiro, qual seu nome?");
 
-console.log("Agora, vamos escolher a sua classe.\n[1] Mago\n[2] Arqueiro\n[3] Guerreiro\n[4] Bardo");
+    console.log("Agora, vamos escolher a sua classe.\n[1] Mago\n[2] Arqueiro\n[3] Guerreiro\n[4] Bardo");
+    let escolhaClasse = Number(prompt("Digite o número da classe escolhida:"));
 
-let escolhaClasse = Number(prompt("Digite o número da classe escolhida:"));
-switch (escolhaClasse) {
-    case 1:
-        jogador.classe = "Mago";
-        jogador.hp += 10;
-        jogador.forca += 5;
-        jogador.def += 7;
-        jogador.mag += 20;
-        jogador.des += 3;
-        jogador.inventario = ["varinha", "chapéu de mago", "livro"];
-        break;
-    case 2:
-        jogador.classe = "Arqueiro";
-        jogador.hp += 12;
-        jogador.forca += 8;
-        jogador.def += 8;
-        jogador.mag += 5;
-        jogador.des += 20;
-        jogador.inventario = ["arco", "aljava", "chapéu de arqueiro"];
-        break;
-    case 3:
-        jogador.classe = "Guerreiro";
-        jogador.hp += 20;
-        jogador.forca += 15;
-        jogador.def += 10;
-        jogador.mag += 0;
-        jogador.des += 2;
-        jogador.inventario = ["espada", "escudo", "chapéu de guerreiro"];
-        break;
-    case 4:
-        jogador.classe = "Bardo";
-        jogador.hp += 15;
-        jogador.forca += 5;
-        jogador.def += 10;
-        jogador.mag += 16;
-        jogador.des += 8;
-        jogador.inventario = ["flauta", "gaita", "chapéu de bardo", "alaude", "triângulo", "ratos"];
-        break;
-    default:
-        console.log("Indigente");
-        jogador.classe = "";
-        jogador.hp = 0;
-        jogador.forca = 0;
-        jogador.def = 0;
-        jogador.mag = 0;
-        jogador.des = 0;
-        jogador.inventario = [];
-}
-
-// Loop principal do jogo
-while (jogadorEstaVivo()) {
-    console.log("Escolha uma ação:");
-    console.log("[1] Batalhar");
-    console.log("[2] Visualizar itens no inventário");
-    console.log("[3] Ver atributos");
-    console.log("[4] Comprar poção de dano (20 de ouro)");
-    console.log("[5] Comprar poção de cura (10 de ouro)");
-    console.log("[6] Sair do jogo");
-
-    const escolhaAcao = prompt("Digite o número da ação escolhida:");
-
-    switch (escolhaAcao) {
-        case "1":
-            const monstro = escolherMonstroAleatorio();
-            batalhar(monstro);
+    switch (escolhaClasse) {
+        case 1:
+            jogador.classe = "Mago";
+            jogador.hp += 10;
+            jogador.forca += 5;
+            jogador.def += 7;
+            jogador.mag += 20;
+            jogador.des += 3;
+            jogador.inventario = ["varinha", "chapéu de mago", "livro"];
             break;
-        case "2":
-            mostrarItensClasse(); // Mostra apenas os itens da classe do jogador
+        case 2:
+            jogador.classe = "Arqueiro";
+            jogador.hp += 12;
+            jogador.forca += 8;
+            jogador.def += 8;
+            jogador.mag += 5;
+            jogador.des += 20;
+            jogador.inventario = ["arco", "aljava", "chapéu de arqueiro"];
             break;
-        case "3":
-            Mostrarinfo();
+        case 3:
+            jogador.classe = "Guerreiro";
+            jogador.hp += 20;
+            jogador.forca += 15;
+            jogador.def += 10;
+            jogador.mag += 0;
+            jogador.des += 2;
+            jogador.inventario = ["espada", "escudo", "chapéu de guerreiro"];
             break;
-        case "4":
-            comprarPocaoDano();
-            break;
-        case "5":
-            comprarPocaoCura();
-            break;
-        case "6":
-            console.log("Obrigado por jogar!");
+        case 4:
+            jogador.classe = "Bardo";
+            jogador.hp += 15;
+            jogador.forca += 5;
+            jogador.def += 10;
+            jogador.mag += 16;
+            jogador.des += 8;
+            jogador.inventario = ["flauta", "gaita", "chapéu de bardo", "alaude", "triângulo", "ratos"];
             break;
         default:
-            console.log("Opção inválida. Escolha novamente.");
+            console.log("Escolha inválida. O jogo será encerrado.");
+            return;
     }
+
+    // Loop principal do jogo
+    while (jogadorEstaVivo()) {
+        console.log("\nEscolha uma ação:");
+        console.log("[1] Batalhar");
+        console.log("[2] Visualizar itens no inventário");
+        console.log("[3] Ver atributos");
+        console.log("[4] Comprar poção de dano (20 de ouro)");
+        console.log("[5] Comprar poção de cura (10 de ouro)");
+        console.log("[6] Sair do jogo");
+
+        const escolhaAcao = prompt("Digite o número da ação escolhida:");
+
+        switch (escolhaAcao) {
+            case "1":
+                const monstro = escolherMonstroAleatorio();
+                batalhar(monstro);
+                break;
+            case "2":
+                mostrarItensClasse(); // Mostra apenas os itens da classe do jogador
+                break;
+            case "3":
+                Mostrarinfo();
+                break;
+            case "4":
+                comprarPocaoDano();
+                break;
+            case "5":
+                comprarPocaoCura();
+                break;
+            case "6":
+                console.log("Obrigado por jogar!");
+                return; // Encerra o loop e o jogo
+            default:
+                console.log("Opção inválida. Escolha novamente.");
+        }
+    }
+
+    console.log("Game Over - Você foi derrotado!");
 }
+
+// Inicia o jogo
+jogo();
+
